@@ -15,10 +15,9 @@ public class Cryptanalyzer {
         String encode = "C:\\Users\\IlyaI\\Desktop\\1\\cripto2.txt";
         String decode = "C:\\Users\\IlyaI\\Desktop\\1\\decode.txt";
         int key = -125678;
-        int keySymbol = key % 73;
-        int keyEncode = keySymbol * -1;
+        int normalKey = key % 73; //Нормализация ключа
 
-        List<Character> alhabet = new ArrayList<>();
+        /*List<Character> alhabet = new ArrayList<>();
         alhabet.add('а');
         alhabet.add('б');
         alhabet.add('в');
@@ -91,40 +90,33 @@ public class Cryptanalyzer {
         alhabet.add(':');
         alhabet.add('!');
         alhabet.add('?');
-        alhabet.add(' ');
-        /*try(
+        alhabet.add(' ');*/
+        try(
                 BufferedReader reader = new BufferedReader(new FileReader(encode));
                 BufferedWriter writer = new BufferedWriter(new FileWriter(decode));
         ) {
 
             while (reader.ready())
             {
-                char symbol = (char) reader.read();
-                if (alhabet.contains(symbol)) {
-                    int index = alhabet.indexOf(symbol) + keySymbol; //-1
-                    if(index > 72 && index >=0) index = keySymbol-1;
-                    else if (index < 0) index += 73;
-                    writer.write(alhabet.get(index));
-                } else {
-                    writer.write(symbol);
-                }
+                char symbol = (char) reader.read();                                 // Читаем один символ из файла
+                writer.write(Alphabet.shiftCharacter(symbol, normalKey));           // Записываем измененный символ в новый файл
 
             }
         } catch (IOException e) {
-            System.out.println(e);
-        }*/
+            System.out.println("error");
+        }
+
         int[] symbolQuantity = new int[33];
         try (
                 BufferedReader reader = new BufferedReader(new FileReader(encode))
-                //BufferedWriter writer = new BufferedWriter(new FileWriter(dest))
         ) {
             while (reader.ready()) {
                 char symbol = (char) reader.read();
-                if (alhabet.contains(symbol) && alhabet.indexOf(symbol) < 65){
+                /*if (Alphabet.listSymbols.contains(symbol) && alhabet.indexOf(symbol) < 65){
                     int index = alhabet.indexOf(symbol);
                     if(index > 32) index -= 33;
                     symbolQuantity[index]++;
-                }
+                }*/
             }
             for (int i : symbolQuantity) {
                 System.out.println(i);
