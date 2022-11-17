@@ -9,18 +9,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Cryptanalyzer {
-    public static void main(String[] args) {
-        String operation = args[0];                 // Получаем тип операции
-        if (operation.equals("encode") || operation.equals("decode")) {          // Проверяем тип операции
-            File file = new File(args[1]);
+    public static void main(String[] args) throws IOException {
+        File fileIn = new File(args[1]);
+        String operation = args[0];
+        if (operation.equals("encode")) {
+            int key = Integer.parseInt(args[2]) % 73;   //Получаем ключ и делаем "нормализацию".
+            fileIn.encoding(key);
+            System.out.println("Done");
+        } else if (operation.equals("decode")) {
             int key = Integer.parseInt(args[2]) % 73;       //Получаем ключ и делаем "нормализацию".
-            file.encoding(operation, key);
+            fileIn.decoding(key);
             System.out.println("Done");
         } else if ((operation.equals("bruteForce"))) {
-            File file = new File(args[1], true);
-            file.bruteForce();
+            fileIn.bruteForce();
             System.out.println("Done!");
+
+
         }
-        System.out.println("Sorry, Argument error! Check and try again");
     }
 }

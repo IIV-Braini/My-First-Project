@@ -82,41 +82,45 @@ public class Alphabet {
         listSymbols.add('?');
         listSymbols.add(' ');
     }
-    public static double[] StandardQuantity = new double[32];            // Эталонное кол-во букв в % встречающихся в тексте. Е и Ё вместе
+   /* public static List<Double> StandardQuantity = new ArrayList<>();            // Эталонное кол-во букв в % встречающихся в тексте. Е и Ё вместе
     static {
-        StandardQuantity[0] = 7.92;           // А
-        StandardQuantity[1] = 1.71;           // Б
-        StandardQuantity[2] = 4.33;           // В
-        StandardQuantity[3] = 1.74;           // Г
-        StandardQuantity[4] = 3.05;            // Д
-        StandardQuantity[5] = 8.41;           // Е + Ё
-        StandardQuantity[6] = 1.05;           // Ж
-        StandardQuantity[7] = 1.75;           // З
-        StandardQuantity[8] = 6.83;           // И
-        StandardQuantity[9] = 1.12;            // Й
-        StandardQuantity[10] = 3.36;            // К
-        StandardQuantity[11] = 5.00;            // Л
-        StandardQuantity[12] = 3.26;            // М
-        StandardQuantity[13] = 6.72;            // Н
-        StandardQuantity[14] = 11.08;            // О
-        StandardQuantity[15] = 2.81;            // П
-        StandardQuantity[16] = 4.45;            // Р
-        StandardQuantity[17] = 5.33;            // С
-        StandardQuantity[18] = 6.18;            // Т
-        StandardQuantity[19] = 2.18;            // У
-        StandardQuantity[20] = 0.19;            // Ф
-        StandardQuantity[21] = 0.89;            // Х
-        StandardQuantity[22] = 0.36;            // Ц
-        StandardQuantity[23] = 1.47;            // Ч
-        StandardQuantity[24] = 0.81;            // Ш
-        StandardQuantity[25] = 0.37;            // Щ
-        StandardQuantity[26] = 0.02;           // Ъ
-        StandardQuantity[27] = 1.96;           // Ы
-        StandardQuantity[28] = 1.92;            // ь
-        StandardQuantity[29] = 0.38;            // Э
-        StandardQuantity[30] = 0.61;            // Ю
-        StandardQuantity[31] = 2.13;            // Я
-    }
+        StandardQuantity.add(7.92);           // А
+        StandardQuantity.add(1.71);           // Б
+        StandardQuantity.add(4.33);           // В
+        StandardQuantity.add(1.74);           // Г
+        StandardQuantity.add(3.05);            // Д
+        StandardQuantity.add(8.41);           // Е + Ё
+        StandardQuantity.add(1.05);           // Ж
+        StandardQuantity.add(1.75);           // З
+        StandardQuantity.add(6.83);           // И
+        StandardQuantity.add(1.12);            // Й
+        StandardQuantity.add(3.36);            // К
+        StandardQuantity.add(5.00);            // Л
+        StandardQuantity.add(3.26);            // М
+        StandardQuantity.add(6.72);            // Н
+        StandardQuantity.add(11.08);            // О
+        StandardQuantity.add(2.81);            // П
+        StandardQuantity.add(4.45);            // Р
+        StandardQuantity.add(5.33);            // С
+        StandardQuantity.add(6.18);            // Т
+        StandardQuantity.add(2.18);            // У
+        StandardQuantity.add(0.19);            // Ф
+        StandardQuantity.add(0.89);            // Х
+        StandardQuantity.add(0.36);            // Ц
+        StandardQuantity.add(1.47);            // Ч
+        StandardQuantity.add(0.81);            // Ш
+        StandardQuantity.add(0.37);            // Щ
+        StandardQuantity.add(0.02);           // Ъ
+        StandardQuantity.add(1.96);           // Ы
+        StandardQuantity.add(1.92);            // ь
+        StandardQuantity.add(0.38);            // Э
+        StandardQuantity.add(0.61);            // Ю
+        StandardQuantity.add(2.13);            // Я
+    }*/
+
+    public static double BigPercent = 92.73;
+    public static double smallPercent = 7.27;
+
 
 
 
