@@ -2,17 +2,15 @@ package com.braini.cryptanalyzer;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public class File {
-    private String name;
-    private String path;                                                                                       // путь к файлу
+    private final String name;
+    private final String path;
 
 
-
-    public File(String path) throws IOException {
+    public File(String path) {
         this.path = getPath(path);
         this.name = getName(path);
     }
@@ -24,54 +22,61 @@ public class File {
 
     private String getPath(String fullPath) {
         StringBuilder str = new StringBuilder(fullPath);
-        return str.substring(0, str.lastIndexOf("/"));
+        return str.substring(0, str.lastIndexOf("\\") + 1);
     }
 
     private String getName(String fullPath) {
         StringBuilder str = new StringBuilder(fullPath);
-        return str.substring(str.lastIndexOf("/")+1);
+        return str.substring(str.lastIndexOf("\\") + 1);
     }
 
-    private String renameDecodeFile () {
+    private String renameDecodeFile() {
         StringBuilder str = new StringBuilder(name);
         str.setCharAt(str.lastIndexOf("(") + 1, 'd');
-        str.setCharAt(str.lastIndexOf("(") + 2, 'c');
+        str.setCharAt(str.lastIndexOf("(") + 2, 'e');
         return String.valueOf(str);
     }
 
-    private String renameEncodeFile () {
-        StringBuilder str = new StringBuilder(name);
+    private String renameEncodeFile(File file) {
+        StringBuilder str = new StringBuilder(file.name);
         str.insert(str.lastIndexOf("."), "(encoded)");
         return String.valueOf(str);
     }
 
-    private String renameBruteForceFile (String key) {
+    private String renameBruteForceFile(String key) {
         StringBuilder str = new StringBuilder(name);
         str.insert(str.lastIndexOf("."), "(decoded key-" + key + ")");
         return String.valueOf(str);
     }
 
-    private List<Double> countingSymbols() throws IOException {
-        double count = 0;                                                                                     // Счетчик для кол-ва букв в тексте, будем использовать для подсчета процентов.
-        double[] symbolsCount = new double[32];                                                               // Массив, в котором будем хранить кол-во встречаемых букв
-        BufferedReader reader = readFile(this);
-        while (reader.ready()) {
-            char symbol = String.valueOf((char) reader.read()).toLowerCase().toCharArray()[0];           // читаем символ и сразу приводит его к маленькому регистру
-            if (Alphabet.charContains(symbol) && Alphabet.getIndex(symbol) < 33) {    // Проверяем, если наш символ в "азбуке" и находится ли он от а до я
-                int index = Alphabet.getIndex(symbol);                                        // получаем индекс этого символа
-                if (index == 6)
-                    index--;                                                                 // Тут ё стала е
-                symbolsCount[index]++;                                                                   // считаем кол-во полученых символов
-            }
-        }
+    private List<Double> countingSymbols() {
+        double count = 0;                                               // Счетчик для кол-ва букв в тексте, будем использовать для подсчета процентов.
+        double[] symbolsCount = new double[40];                         // Массив, в котором будем хранить кол-во встречаемых букв от а до я и наши знаки 33+7.
         List<Double> symbolQuantity = new ArrayList<>();
-        for (int i = 0; i < 33; i++) {
-            symbolQuantity.add(symbolsCount[i] / count * 100);                                          // Считаем в процентах кол-во каждой из букв
+        try (BufferedReader reader = new BufferedReader(new FileReader(this.path + this.name))) {
+            while (reader.ready()) {
+                Character symbol = Character.toLowerCase((char) reader.read()); // читаем символ и сразу приводит его к маленькому регистру
+                count++;
+                if (Alphabet.charContains(symbol)) {                        // Проверяем, если наш символ в "азбуке"
+                    int index = Alphabet.getIndex(symbol);                  // получаем индекс этого символа
+                    if (index == 6)
+                        index--;                                            // Тут ё стала е
+                    if (index > 32) index -=33;                             // Знаки сдвигаются на 33 знака.
+                    symbolsCount[index]++;                                                                   // считаем кол-во полученных символов
+                }
+            }
+            for (int i = 0; i < 39; i++) {
+                symbolQuantity.add(symbolsCount[i] / count * 100);                                          // Считаем в процентах кол-во каждой из букв
+            }
+            System.out.println("1");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return symbolQuantity;
     }
 
-    private BufferedReader readFile(File file) {
+
+    /*private BufferedReader readFile(File file) {
         try (BufferedReader reader = new BufferedReader(new FileReader(file.path + file.name))) {
             return reader;
         } catch (
@@ -82,8 +87,8 @@ public class File {
         return null;
     }
 
-    private BufferedWriter writeFile(File file) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file.path + file.name))) {
+    private BufferedWriter writeFile() {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.path + this.name))) {
             return writer;
         } catch (
                 IOException e) {
@@ -91,37 +96,69 @@ public class File {
         }
         System.out.println("Sorry, system not write data to file");
         return null;
-    }
+    }*/
 
-    public void encoding(int key) throws IOException {
-        BufferedReader reader = readFile(this);
-        File encodeFile = new File(path + this.renameEncodeFile());
-        BufferedWriter writer = writeFile(encodeFile);
-        while (reader.ready()) {
-            char symbol = (char) reader.read();                                 // Читаем один символ из файла
-            writer.write(Alphabet.shiftCharacter(symbol, key));                 // Записываем измененный символ в новый файл
+    public void encoding(int key) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(this.path + this.name));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(this.path + renameEncodeFile(this)))) {
+            while (reader.ready()) {
+                char symbol = (char) reader.read();                                 // Читаем один символ из файла
+                writer.write(Alphabet.shiftCharacter(symbol, key));                 // Записываем измененный символ в новый файл
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error. Check the program");
         }
     }
 
-    public void decoding(int key) throws IOException {
-        BufferedReader reader = readFile(this);
-        key = key * -1;
-        File decodeFile = new File(path + this.renameDecodeFile());
-        BufferedWriter writer = writeFile(decodeFile);
-        while (reader.ready()) {
-            char symbol = (char) reader.read();                                 // Читаем один символ из файла
-            writer.write(Alphabet.shiftCharacter(symbol, key));                 // Записываем измененный символ в новый файл
+
+    public void decoding(int key) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(this.path + this.name));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(this.path + this.renameDecodeFile()))) {
+            key = key * -1;
+            while (reader.ready()) {
+                char symbol = (char) reader.read();                                 // Читаем один символ из файла
+                writer.write(Alphabet.shiftCharacter(symbol, key));                 // Записываем измененный символ в новый файл
+            }
+        } catch (IOException e) {
+            System.out.println("Error. Check the program");
         }
     }
-
-        // (decoded) и (decoded key-20)
 
     public void bruteForce() throws IOException {
         List<Double> symbols = countingSymbols();
         int key = 0;
-        int compareIndex = 1000;
-        for (int i = 0; i < 32; i++) {
+        double percentSmallSymbols = 100;
+        for (int i = 0; i < 39; i++) {
             Collections.rotate(symbols, i);
+            double sum = sumPercentSmallSymbols(symbols);
+            if (percentSmallSymbols > sum) {
+                percentSmallSymbols = sum;
+                key = i;
+            }
         }
+        try (BufferedReader reader = new BufferedReader(new FileReader(this.path + this.name));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(this.path + this.renameBruteForceFile(String.valueOf(key))))) {
+            key = key * -1;
+            while (reader.ready()) {
+                char symbol = (char) reader.read();                                 // Читаем один символ из файла
+                writer.write(Alphabet.shiftCharacter(symbol, key));                 // Записываем измененный символ в новый файл
+            }
+        }
+    }
+
+    private double sumPercentSmallSymbols(List<Double> list) {
+        double sum = list.get(6) +
+                list.get(9) +
+                list.get(20) +
+                list.get(21) +
+                list.get(22) +
+                list.get(23) +
+                list.get(24) +
+                list.get(25) +
+                list.get(26) +
+                list.get(29) +
+                list.get(30);
+        return sum;
     }
 }
