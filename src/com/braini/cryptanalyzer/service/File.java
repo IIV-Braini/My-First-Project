@@ -10,55 +10,55 @@ public class File {
     private final String path;
 
 
-    public File(String path) {
-        this.path = getPath(path);
-        this.name = getName(path);
+    public File(String fullPath) {
+        this.path = getPath(fullPath);
+        this.name = getName(fullPath);
     }
 
-    private String getPath(String fullPath) {
+    private String getPath(String fullPath) {                   //метод для получения пути файла без имени
         StringBuilder str = new StringBuilder(fullPath);
         return str.substring(0, str.lastIndexOf("\\") + 1);
     }
 
-    private String getName(String fullPath) {
+    private String getName(String fullPath) {                   //метод для получения имени файла
         StringBuilder str = new StringBuilder(fullPath);
         return str.substring(str.lastIndexOf("\\") + 1);
     }
 
-    private String renameDecodeFile() {
+    private String renameDecodeFile() {                         // Метод для создания нужного имени файла, который будет создан при рассшифровке файла
         StringBuilder str = new StringBuilder(name);
         str.setCharAt(str.lastIndexOf("(") + 1, 'd');
         str.setCharAt(str.lastIndexOf("(") + 2, 'e');
         return String.valueOf(str);
     }
 
-    private String renameEncodeFile(File file) {
+    private String renameEncodeFile(File file) {                // Метод для создания нужного имени файла, который будет создан при шифровании файла
         StringBuilder str = new StringBuilder(file.name);
         str.insert(str.lastIndexOf("."), "(encoded)");
         return String.valueOf(str);
     }
 
-    private String renameBruteForceFile(String key) {
+    private String renameBruteForceFile(String key) {           // Метод для создания нужного имени файла, который будет создан при брутфорсе
         StringBuilder str = new StringBuilder(name);
         str.insert(str.lastIndexOf("."), "(decoded key-" + key + ")");
         return String.valueOf(str);
     }
 
     private List<Double> countingSymbols() {
-        double count = 0;                                               // Счетчик для кол-ва букв в тексте, будем использовать для подсчета процентов.
-        double[] symbolsCount = new double[Alphabet.listSymbols.size()/2];                         // Массив, в котором будем хранить кол-во встречаемых букв от а до я и наши знаки 33+7.
+        double count = 0;                                                           // Счетчик для кол-ва букв в тексте, будем использовать для подсчета процентов.
+        double[] symbolsCount = new double[Alphabet.listSymbols.size() / 2];          // Массив, в котором будем хранить кол-во встречаемых букв от а до я и наши знаки 33+7.
         List<Double> symbolQuantity = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(this.path + this.name))) {
             while (reader.ready()) {
-                Character symbol = Character.toLowerCase((char) reader.read()); // читаем символ и сразу приводит его к маленькому регистру
+                char symbol = Character.toLowerCase((char) reader.read());     // читаем символ и сразу приводит его к маленькому регистру
                 count++;
-                if (Alphabet.charContains(symbol)) {                        // Проверяем, если наш символ в "азбуке"
-                    int index = Alphabet.getIndex(symbol);                  // получаем индекс этого символа
-                    symbolsCount[index]++;                                                                   // считаем кол-во полученных символов
+                if (Alphabet.charContains(symbol)) {                                // Проверяем, если наш символ в "азбуке"
+                    int index = Alphabet.getIndex(symbol);                         // получаем индекс этого символа
+                    symbolsCount[index]++;                                         // считаем кол-во полученных символов
                 }
             }
-            for (int i = 0; i < Alphabet.listSymbols.size()/2; i++) {
-                symbolQuantity.add(symbolsCount[i] / count * 100);                                          // Считаем в процентах кол-во каждой из букв
+            for (int i = 0; i < Alphabet.listSymbols.size() / 2; i++) {
+                symbolQuantity.add(symbolsCount[i] / count * 100);                 // Считаем в процентах кол-во каждой из букв
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -99,7 +99,7 @@ public class File {
 
         int key = 1;
         double sum = 0;
-        for (int i = 0; i < Alphabet.listSymbols.size()/2; i++) {
+        for (int i = 0; i < Alphabet.listSymbols.size() / 2; i++) {
             Collections.rotate(symbols, -1);
             double sumPercent = sumPercentBigSymbols(symbols, bigPercent);
             if (sumPercent > sum) {
@@ -107,9 +107,8 @@ public class File {
                 key = i + 1;
             }
         }
-        //System.out.println(sum);
-        if (countCapitalLetters() > countLowercaseLetters()) key += Alphabet.listSymbols.size()/2;
-
+        if (countCapitalLetters() > countLowercaseLetters() && key != Alphabet.listSymbols.size() / 2)
+            key += Alphabet.listSymbols.size() / 2;      // Проверка, что строчных символов больше, чем заглавных
         try (BufferedReader reader = new BufferedReader(new FileReader(this.path + this.name));
              BufferedWriter writer = new BufferedWriter(new FileWriter(this.path + this.renameBruteForceFile(String.valueOf(key))))) {
             key = key * -1;
@@ -131,8 +130,8 @@ public class File {
 
     private double sumPercentBigSymbols(List<Double> percent, List<Integer> index) {        // метод, считает сумму символов, которые употребляются более 4%
         double sum = 0;
-        for (int i = 0; i < index.size(); i++) {
-            sum += percent.get(index.get(i));
+        for (Integer integer : index) {
+            sum += percent.get(integer);
         }
         return sum;
     }
@@ -141,8 +140,8 @@ public class File {
         int count = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader(this.path + this.name))) {
             while (reader.ready()) {
-                Character symbol = (char) reader.read();
-                if (Alphabet.charContains(symbol) && Alphabet.getIndex(symbol) >= Alphabet.listSymbols.size()/2) {
+                char symbol = (char) reader.read();
+                if (Alphabet.charContains(symbol) && Alphabet.getIndex(symbol) >= Alphabet.listSymbols.size() / 2) {
                     count++;
                 }
             }
@@ -156,9 +155,9 @@ public class File {
         int count = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader(this.path + this.name))) {
             while (reader.ready()) {
-                Character symbol = (char) reader.read();
-                if (Alphabet.charContains(symbol) && Alphabet.getIndex(symbol) < Alphabet.listSymbols.size()/2) {
-                    count++;
+                char symbol = (char) reader.read();
+                if (Alphabet.charContains(symbol) && Alphabet.getIndex(symbol) < Alphabet.listSymbols.size() / 2) {
+                count++;
                 }
             }
         } catch (IOException e) {
