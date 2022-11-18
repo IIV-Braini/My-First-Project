@@ -8,79 +8,58 @@ public class Alphabet {
     public static List<Character> listSymbols = new ArrayList<>();
 
    static {
-        listSymbols.add('а');
-        listSymbols.add('б');
-        listSymbols.add('в');
-        listSymbols.add('г');
-        listSymbols.add('д');
-        listSymbols.add('е');
-        listSymbols.add('ё');
-        listSymbols.add('ж');
-        listSymbols.add('з');
-        listSymbols.add('и');
-        listSymbols.add('й');
-        listSymbols.add('к');
-        listSymbols.add('л');
-        listSymbols.add('м');
-        listSymbols.add('н');
-        listSymbols.add('о');
-        listSymbols.add('п');
-        listSymbols.add('р');
-        listSymbols.add('с');
-        listSymbols.add('т');
-        listSymbols.add('у');
-        listSymbols.add('ф');
-        listSymbols.add('х');
-        listSymbols.add('ц');
-        listSymbols.add('ч');
-        listSymbols.add('ш');
-        listSymbols.add('щ');
-        listSymbols.add('ъ');
-        listSymbols.add('ы');
-        listSymbols.add('ь');
-        listSymbols.add('э');
-        listSymbols.add('ю');
-        listSymbols.add('я');
-        listSymbols.add('А');
-        listSymbols.add('Б');
-        listSymbols.add('В');
-        listSymbols.add('Г');
-        listSymbols.add('Д');
-        listSymbols.add('Е');
-        listSymbols.add('Ё');
-        listSymbols.add('Ж');
-        listSymbols.add('З');
-        listSymbols.add('И');
-        listSymbols.add('Й');
-        listSymbols.add('К');
-        listSymbols.add('Л');
-        listSymbols.add('М');
-        listSymbols.add('Н');
-        listSymbols.add('О');
-        listSymbols.add('П');
-        listSymbols.add('Р');
-        listSymbols.add('С');
-        listSymbols.add('Т');
-        listSymbols.add('У');
-        listSymbols.add('Ф');
-        listSymbols.add('Х');
-        listSymbols.add('Ц');
-        listSymbols.add('Ч');
-        listSymbols.add('Ш');
-        listSymbols.add('Щ');
-        listSymbols.add('Ъ');
-        listSymbols.add('Ы');
-        listSymbols.add('Ь');
-        listSymbols.add('Э');
-        listSymbols.add('Ю');
-        listSymbols.add('Я');
-        listSymbols.add('.');
-        listSymbols.add(',');
-        listSymbols.add('\"');
-        listSymbols.add(':');
-        listSymbols.add('!');
-        listSymbols.add('?');
-        listSymbols.add(' ');
+        listSymbols.add('a');
+        listSymbols.add('b');
+        listSymbols.add('c');
+        listSymbols.add('d');
+        listSymbols.add('e');
+        listSymbols.add('f');
+        listSymbols.add('g');
+        listSymbols.add('h');
+        listSymbols.add('i');
+        listSymbols.add('j');
+        listSymbols.add('k');
+        listSymbols.add('l');
+        listSymbols.add('m');
+        listSymbols.add('n');
+        listSymbols.add('o');
+        listSymbols.add('p');
+        listSymbols.add('q');
+        listSymbols.add('r');
+        listSymbols.add('s');
+        listSymbols.add('t');
+        listSymbols.add('u');
+        listSymbols.add('v');
+        listSymbols.add('w');
+        listSymbols.add('x');
+        listSymbols.add('y');
+        listSymbols.add('z');
+        listSymbols.add('A');
+        listSymbols.add('B');
+        listSymbols.add('C');
+        listSymbols.add('D');
+        listSymbols.add('E');
+        listSymbols.add('F');
+        listSymbols.add('G');
+        listSymbols.add('H');
+        listSymbols.add('I');
+        listSymbols.add('J');
+        listSymbols.add('K');
+        listSymbols.add('L');
+        listSymbols.add('M');
+        listSymbols.add('N');
+        listSymbols.add('O');
+        listSymbols.add('P');
+        listSymbols.add('Q');
+        listSymbols.add('R');
+        listSymbols.add('S');
+        listSymbols.add('T');
+        listSymbols.add('U');
+        listSymbols.add('V');
+        listSymbols.add('W');
+        listSymbols.add('X');
+        listSymbols.add('Y');
+        listSymbols.add('Z');
     }
    /* public static List<Double> StandardQuantity = new ArrayList<>();            // Эталонное кол-во букв в % встречающихся в тексте. Е и Ё вместе
     static {
@@ -127,10 +106,10 @@ public class Alphabet {
     public static Character shiftCharacter(char symbol, int key) {    //Метод проверяет, входит ли символ в наш алфавит. Если символ входит, возвращает символ сдвинутый на key-позиций
         if (listSymbols.contains(symbol)) {                    // Проверяем, входит ли переданный символ в наш алфавит;
             int index = listSymbols.indexOf(symbol) + key;    // Создаем индекс, который равняется индексу текущего элемента + сдвигаемое кол-во символов;
-            if (index > 72)
-                index = key - 1;                    // Если индекс больше 72(алфавил "закончился"), индекс равняется key - 1 (из-за отсчета от 0);
+            if (index > 51)
+                index -= 52;                    // Если индекс больше 52(алфавил "закончился") 52, что бы получит актуальный индекс элемента;
             else if (index < 0)
-                index += 73;                        // Если ключ был отрицательный и индекс стал отрицательным добавляем 73, что бы получит актуальный индекс элемента
+                index += 52;                        // Если индекс стал отрицательным добавляем 52, что бы получит актуальный индекс элемента;
             return listSymbols.get(index);                  // Возвращаем полученный символ
         } else {
             return symbol;                                  //Если элемент не попадает в наш список, возвращаем как есть.

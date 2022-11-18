@@ -12,12 +12,14 @@ public class Cryptanalyzer {
     public static void main(String[] args) throws IOException {
         //File fileIn = new File(args[1]);
         //String operation = args[0];
-        String str = "C:\\Users\\IlyaI\\Desktop\\1\\3(encoded).txt";
+        String str = "C:\\Users\\IlyaI\\OneDrive\\1\\hamlet(encoded).txt";
+        String str2 = "C:\\Users\\IlyaI\\OneDrive\\1\\othello.txt";
         String operation = "bruteForce";
         File fileIn = new File(str);
-        int key = 3534;
+        File fileAnalyzer = new File(str2);
+        int key = 17;
         if (operation.equals("encode")) {
-            //int key = Integer.parseInt(args[2]) % 73;   //Получаем ключ и делаем "нормализацию".
+            //key = Integer.parseInt(args[2]) % 73;   //Получаем ключ и делаем "нормализацию".
             fileIn.encoding(key);
             System.out.println("Done");
         } else if (operation.equals("decode")) {
@@ -25,10 +27,8 @@ public class Cryptanalyzer {
             fileIn.decoding(key);
             System.out.println("Done");
         } else if ((operation.equals("bruteForce"))) {
-            fileIn.bruteForce();
+            fileIn.bruteForce(fileAnalyzer);
             System.out.println("Done!");
-
-
         }
     }
 }
