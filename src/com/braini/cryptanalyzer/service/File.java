@@ -1,4 +1,4 @@
-package com.braini.cryptanalyzer;
+package com.braini.cryptanalyzer.service;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -46,7 +46,7 @@ public class File {
 
     private List<Double> countingSymbols() {
         double count = 0;                                               // Счетчик для кол-ва букв в тексте, будем использовать для подсчета процентов.
-        double[] symbolsCount = new double[26];                         // Массив, в котором будем хранить кол-во встречаемых букв от а до я и наши знаки 33+7.
+        double[] symbolsCount = new double[Alphabet.listSymbols.size()/2];                         // Массив, в котором будем хранить кол-во встречаемых букв от а до я и наши знаки 33+7.
         List<Double> symbolQuantity = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(this.path + this.name))) {
             while (reader.ready()) {
@@ -57,7 +57,7 @@ public class File {
                     symbolsCount[index]++;                                                                   // считаем кол-во полученных символов
                 }
             }
-            for (int i = 0; i < 26; i++) {
+            for (int i = 0; i < Alphabet.listSymbols.size()/2; i++) {
                 symbolQuantity.add(symbolsCount[i] / count * 100);                                          // Считаем в процентах кол-во каждой из букв
             }
         } catch (IOException e) {
@@ -65,29 +65,6 @@ public class File {
         }
         return symbolQuantity;
     }
-
-
-    /*private BufferedReader readFile(File file) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(file.path + file.name))) {
-            return reader;
-        } catch (
-                IOException e) {
-            System.out.println("Error reading the file. Check the path");
-        }
-        System.out.println("Sorry, system not read file");
-        return null;
-    }
-
-    private BufferedWriter writeFile() {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(this.path + this.name))) {
-            return writer;
-        } catch (
-                IOException e) {
-            System.out.println("Error writer the file. Check the path");
-        }
-        System.out.println("Sorry, system not write data to file");
-        return null;
-    }*/
 
     public void encoding(int key) {
         try (BufferedReader reader = new BufferedReader(new FileReader(this.path + this.name));
@@ -120,42 +97,73 @@ public class File {
         List<Double> symbols = countingSymbols();               // Считаем проценты букв в декодируемом файле
         List<Integer> bigPercent = indexBigPercentSymbols(file);       // Получаем индексы самых встречаемых букв в Эталонном файле
 
-        int key = 0;
+        int key = 1;
         double sum = 0;
-        for (int i = 0; i < 52; i++) {
-            Collections.rotate(symbols, i*-1);
+        for (int i = 0; i < Alphabet.listSymbols.size()/2; i++) {
+            Collections.rotate(symbols, -1);
             double sumPercent = sumPercentBigSymbols(symbols, bigPercent);
-            if (sum < sumPercent) {
-                sum = sum;
-                key = i;
+            if (sumPercent > sum) {
+                sum = sumPercent;
+                key = i + 1;
             }
         }
-
+        //System.out.println(sum);
+        if (countCapitalLetters() > countLowercaseLetters()) key += Alphabet.listSymbols.size()/2;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(this.path + this.name));
              BufferedWriter writer = new BufferedWriter(new FileWriter(this.path + this.renameBruteForceFile(String.valueOf(key))))) {
             key = key * -1;
             while (reader.ready()) {
-
-                char symbol = (char) reader.read();                             //Читаем один символ из файла
+                char symbol = (char) reader.read();                                 //Читаем один символ из файла
                 writer.write(Alphabet.shiftCharacter(symbol, key));                 // Записываем измененный символ в новый файл
             }
         }
     }
 
-    public List<Integer> indexBigPercentSymbols (File file) {
+    private List<Integer> indexBigPercentSymbols(File file) {               // Метод, Считает индексы символов, которые встречаются в тексте более 4%
         List<Double> symbols = file.countingSymbols();
         List<Integer> result = new ArrayList<>();
         for (int i = 0; i < symbols.size(); i++) {
-            if (symbols.get(i) > 5) result.add(i);
+            if (symbols.get(i) > 4) result.add(i);
         }
         return result;
     }
-    private double sumPercentBigSymbols(List<Double> percent, List<Integer> index) {
+
+    private double sumPercentBigSymbols(List<Double> percent, List<Integer> index) {        // метод, считает сумму символов, которые употребляются более 4%
         double sum = 0;
         for (int i = 0; i < index.size(); i++) {
             sum += percent.get(index.get(i));
         }
         return sum;
+    }
+
+    private int countCapitalLetters() {        // Считаем заглавные буквы в файле
+        int count = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader(this.path + this.name))) {
+            while (reader.ready()) {
+                Character symbol = (char) reader.read();
+                if (Alphabet.charContains(symbol) && Alphabet.getIndex(symbol) >= Alphabet.listSymbols.size()/2) {
+                    count++;
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return count;
+    }
+
+    private int countLowercaseLetters() {      // Считаем строчные буквы в файле
+        int count = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader(this.path + this.name))) {
+            while (reader.ready()) {
+                Character symbol = (char) reader.read();
+                if (Alphabet.charContains(symbol) && Alphabet.getIndex(symbol) < Alphabet.listSymbols.size()/2) {
+                    count++;
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return count;
     }
 }
